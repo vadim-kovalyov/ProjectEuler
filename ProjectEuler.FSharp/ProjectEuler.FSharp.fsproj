@@ -8,11 +8,11 @@
     <ProjectGuid>47bedd9f-15c1-4254-8e84-b8b99da03741</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ProjectEuler</RootNamespace>
-    <AssemblyName>ProjectEuler</AssemblyName>
+    <AssemblyName>ProjectEuler.FSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>ProjectEuler</Name>
+    <Name>ProjectEuler.FSharp</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Library1.fs" />
+    <Compile Include="ProblemSet1.fs" />
     <None Include="Script.fsx" />
   </ItemGroup>
   <PropertyGroup>
