@@ -5,17 +5,17 @@
 // Find the sum of all the multiples of 3 or 5 below 1000.
 module Problem1 =
 
-    let multiplesOf3 x = x % 3 = 0
-    let multiplesOf5 x = x % 5 = 0
+    let multiplesOf3 n = n % 3 = 0
+    let multiplesOf5 n = n % 5 = 0
 
-    let filter x = (multiplesOf3 x) || (multiplesOf5 x)
+    let filter n = (multiplesOf3 n) || (multiplesOf5 n)
 
-    let problem1 x =
-        [0..x]
+    let problem1 limit =
+        [0..limit]
         |> List.filter filter
         |> List.sum
 
-    printfn "%d" (problem1 999)
+    printfn "Sum of all the multiples of 3 or 5 below 1000 is %d" (problem1 999)
 
 
 // Problem 2:
@@ -23,4 +23,57 @@ module Problem1 =
 // 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
 // By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms.
 module Problem2 =
-    let fib = 1
+    let fib = 
+        let rec fibInner (a) (b) =
+            let c = a + b
+            seq { yield c; yield! fibInner b c }
+
+        seq { yield 1; yield 2; yield! fibInner 1 2 }
+
+    let problem2 limit = 
+        fib
+        |> Seq.takeWhile(fun x -> x < limit)
+        |> Seq.filter (fun x -> x % 2 = 0)
+        |> Seq.sum
+
+    printfn "Sum of the even-valued terms of Fib sequence below 4mil is %A" (problem2 4000000)
+
+// Problem 3:
+// The prime factors of 13195 are 5, 7, 13 and 29.
+// What is the largest prime factor of the number 600851475143 ?
+module Problem3 =
+
+    let sqrt num =
+        let firstGuess (num : bigint) = num / 3I;
+        let rec converge prevGuess =
+            let nextGuess = (num / prevGuess + prevGuess) >>> 1
+            match bigint.Abs (prevGuess - nextGuess) with
+            | x when x < 2I -> nextGuess
+            | _ -> converge nextGuess
+        if num < 0I then
+            failwith "Square root of a negative number is not defined."
+        else
+            let root = converge (firstGuess num)
+            if root * root > num then
+                root - 1I
+            else
+                root
+
+    let isPrime num =
+        match num with
+        | n when n = 1I -> true
+        | n when n = 2I -> true
+        | _ ->
+            let squareRoot = sqrt num
+            not (
+                {2I..squareRoot} |> Seq.exists (fun i -> num % i = 0I)
+            )
+
+    let problem3 num =
+        let squareRoot = sqrt num
+        {squareRoot..(-1I)..2I}
+        |> Seq.filter (fun i -> num % i = 0I)
+        |> Seq.find (fun i -> isPrime i)
+
+    printfn "Largest prime factor of 13195 is %A" (problem3 13195I)
+    printfn "Largest prime factor of 600851475143 is %A" (problem3 600851475143I)
