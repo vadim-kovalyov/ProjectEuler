@@ -77,3 +77,48 @@ module Problem3 =
 
     printfn "Largest prime factor of 13195 is %A" (problem3 13195I)
     printfn "Largest prime factor of 600851475143 is %A" (problem3 600851475143I)
+
+// Problem 4:
+// A palindromic number reads the same both ways. The largest palindrome made 
+// from the product of two 2-digit numbers is 9009 = 91 × 99.
+// Find the largest palindrome made from the product of two 3-digit numbers.
+module Problem4 =
+    
+    let isPalindrome num = 
+        let str = string num
+        let rev = new string(str.ToCharArray() |> Array.rev)
+        str = rev
+
+    let isPalindrome2 num = 
+        let str = string num
+        let length = str.Length;
+        let predicate = fun index -> str.[index] = str.[length - index - 1]
+        [|0..(length / 2 - 1)|] |> Array.forall predicate
+        
+
+    let threeDigitNumbers = Seq.init 900 ((+) 100)
+    
+    let products = Seq.merge (*) threeDigitNumbers threeDigitNumbers
+
+    let projection = fun x -> if isPalindrome x then x else 0
+
+    let max = products |> Seq.maxBy projection
+    printfn "The largest palindrome is %i" max
+
+
+// Problem 5:
+// 2520 is the smallest number that can be divided by each of the numbers from 1 to 10 without any remainder.
+// What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
+module Problem5 =
+    
+    let sequence = Seq.initInfinite (fun i -> (i + 1) * 20)
+
+    let isDivisible dividers n = 
+        dividers 
+        |> List.forall (fun i -> n % i = 0)
+
+    let predicate = isDivisible [1..20]
+
+    let result = Seq.find predicate sequence
+
+    printfn "Result %i" result
