@@ -15,7 +15,7 @@ module Problem1 =
         |> List.filter filter
         |> List.sum
 
-    printfn "Sum of all the multiples of 3 or 5 below 1000 is %d" (problem1 999)
+    printfn "Sum of all the multiples of 3 or 5 below 1000 is %d" <| problem1 999
 
 
 // Problem 2:
@@ -36,7 +36,7 @@ module Problem2 =
         |> Seq.filter (fun x -> x % 2 = 0)
         |> Seq.sum
 
-    printfn "Sum of the even-valued terms of Fib sequence below 4mil is %A" (problem2 4000000)
+    printfn "Sum of the even-valued terms of Fib sequence below 4mil is %A" <| problem2 4000000
 
 // Problem 3:
 // The prime factors of 13195 are 5, 7, 13 and 29.
@@ -75,8 +75,8 @@ module Problem3 =
         |> Seq.filter (fun i -> num % i = 0I)
         |> Seq.find (fun i -> isPrime i)
 
-    printfn "Largest prime factor of 13195 is %A" (problem3 13195I)
-    printfn "Largest prime factor of 600851475143 is %A" (problem3 600851475143I)
+    printfn "Largest prime factor of 13195 is %A" <| problem3 13195I
+    printfn "Largest prime factor of 600851475143 is %A" <| problem3 600851475143I
 
 // Problem 4:
 // A palindromic number reads the same both ways. The largest palindrome made 
@@ -111,14 +111,83 @@ module Problem4 =
 // What is the smallest positive number that is evenly divisible by all of the numbers from 1 to 20?
 module Problem5 =
     
-    let sequence = Seq.initInfinite (fun i -> (i + 1) * 20)
+    let problem5 dividers = 
+        
+        let sequence = Seq.initInfinite (fun i -> (i + 1) * 20)
 
-    let isDivisible dividers n = 
-        dividers 
-        |> List.forall (fun i -> n % i = 0)
+        let isDivisible dividers n = 
+            dividers 
+            |> List.forall (fun i -> n % i = 0)
+        
+        let predicate = isDivisible dividers
+            
+        sequence |> Seq.find predicate
 
-    let predicate = isDivisible [1..20]
+    printfn "Result is %i" <| problem5 [1..20]
 
-    let result = Seq.find predicate sequence
+// Problem 6:
+// The sum of the squares of the first ten natural numbers is,
+// 12 + 22 + ... + 102 = 385
+// The square of the sum of the first ten natural numbers is,
+// (1 + 2 + ... + 10)2 = 552 = 3025
+// Hence the difference between the sum of the squares of the first ten natural numbers and the square of the sum is 3025 − 385 = 2640.
+// Find the difference between the sum of the squares of the first one hundred natural numbers and the square of the sum.
+module Problem6 =
+    
+    let problem6 list = 
+        let square x = x * x
+        let sumOfSquares list = list |> Seq.map square |> Seq.sum
+        let squareOfSum list = list |> Seq.sum |> square
 
-    printfn "Result %i" result
+        squareOfSum list - sumOfSquares list
+
+    printfn "Result is %i" <| problem6 {1..100}
+
+// By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
+// What is the 10 001st prime number?
+module Problem7 =
+
+    let isPrime n =
+        let rec check i =
+            i > n/2 || (n % i <> 0 && check (i + 1))
+        check 2
+        
+    let problem7 n = 
+        let numbers = Seq.initInfinite (fun i -> i + 2)
+        let primes = numbers |> Seq.filter isPrime
+        primes |> Seq.item (n - 1)
+
+    printfn "Result is %i" <| problem7 6
+    printfn "Result is %i" <| problem7 10001
+
+
+// The four adjacent digits in the 1000-digit number that have the greatest product are 9 × 9 × 8 × 9 = 5832.
+// Find the thirteen adjacent digits in the 1000-digit number that have the greatest product. What is the value of this product?
+module Problem8 =
+    let thousandDigitNumber = "7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450"
+
+    let problem8 substringLength number = 
+        let getSubstringsOfLength n (text:string) = 
+            let rec take from top =
+                if from + top < text.Length then
+                    seq { yield text.Substring(from, top);
+                        yield! take (from + 1) top }
+                else
+                    seq { yield text.Substring(from, top) }
+
+            seq { yield! take 0 n }
+
+        let getProduct digits =
+            digits
+            |> Seq.map string 
+            |> Seq.map int 
+            |> Seq.map bigint 
+            |> Seq.reduce (*)
+
+        number 
+        |> getSubstringsOfLength substringLength
+        |> Seq.map getProduct
+        |> Seq.max
+
+    printfn "%A" <| problem8 4 thousandDigitNumber
+    printfn "%A" <| problem8 13 thousandDigitNumber
