@@ -191,3 +191,28 @@ module Problem8 =
 
     printfn "%A" <| problem8 4 thousandDigitNumber
     printfn "%A" <| problem8 13 thousandDigitNumber
+
+
+// A Pythagorean triplet is a set of three natural numbers, a < b < c, for which,
+//  a2 + b2 = c2
+// For example, 32 + 42 = 9 + 16 = 25 = 52.
+// There exists exactly one Pythagorean triplet for which a + b + c = 1000.
+// Find the product abc.
+module Problem9 =
+
+    let problem9 sum = 
+        let getTriplets sum = 
+            seq {
+                for a = 1 to sum do
+                    for b = a to sum do
+                        for c = b to sum do
+                            if a + b + c = sum then
+                                yield (a,b,c)
+            }
+
+        let triplets = getTriplets sum    
+        let a,b,c = triplets |> Seq.find (fun (a,b,c) -> a*a + b*b = c*c)
+        a*b*c
+
+    printfn "Result is %A" <| problem9 1000
+
